@@ -1,42 +1,51 @@
-# Typhoon training
+# Weather-only pre-typhoon classification
+
+The active workflow is **`training/train_typhoon_models.ipynb`**. Run it in Jupyter or VS Code from top to bottom. Settings and model parameters are in the first cell.
 
 ```text
 Typhoon/
 ├── data/
 │   ├── raw/
-│   ├── processed/
-│   └── gis/jp_shp/
+│   └── processed/
+│       └── jma_day3_to_landfall_with_weather.csv
 ├── preprocessing/
 ├── testing/
 ├── training/
 │   ├── experiment_logs/
 │   ├── trained_models/
-│   ├── train_typhoon_models.ipynb
-│   └── typhoon_nearest_prefecture_models.ipynb
+│   └── train_typhoon_models.ipynb
 └── README.md
 ```
 
-Keep your existing data, preprocessing scripts, and testing scripts in their original folders. The download contains folder placeholders and revised notebooks; it does not replace those existing files. Data and generated models/logs are excluded from Git.
+Your existing data, preprocessing and testing files stay in their folders. Data and generated outputs are excluded from Git. The earlier prefecture notebook remains as an unused reference; it is not needed for this workflow.
 
-Run the notebooks from `Typhoon/training`, opening them in Jupyter or VS Code. Paths also work when the notebook kernel starts from `Typhoon` or the repository root.
+## Training
 
-1. **`typhoon_nearest_prefecture_models.ipynb`** trains a weather-only LSTM to reconstruct latitude/longitude, converts predicted positions to Japan's nearest prefecture, and saves the merged weather/prefecture CSV. It displays training loss, heldout coordinates and location errors.
-2. **`train_typhoon_models.ipynb`** reads that CSV and trains Random Forest, CART, Gradient Boosting and SVM. It displays Low/Medium/High classification scores, confusion matrices and sample predictions.
+The notebook reads `data/processed/jma_day3_to_landfall_with_weather.csv` directly. It uses all available history by default, with optional `START_DATE` and `END_DATE` settings. The provided file has **588 rows across 102 storms** after selecting the three days before landfall. Landfall-day records are excluded.
 
-Edit `EXPERIMENT_ID`, dates, model settings and file paths in the first settings cell. Both notebooks should use the same `EXPERIMENT_ID`. Outputs are protected unless `OVERWRITE_OUTPUTS` is enabled.
+Only the selected weather attributes enter the models. Nearest prefecture, coordinates, elevation, dates, storm attributes, IDs, and day labels are excluded from the feature matrix. Wind direction is encoded as sine/cosine inside each saved model. Missing weather cells are imputed using the training data.
 
-Required input files:
+Profile labels are derived from the known event's `days_before_landfall`:
 
-```text
-data/processed/jma_day3_to_landfall_with_weather_prefecture.csv
-data/gis/jp_shp/jp.shp
-data/gis/jp_shp/jp.dbf
-data/gis/jp_shp/jp.shx
-data/gis/jp_shp/jp.prj
-```
+- **Low:** Day −3 weather.
+- **Medium:** Day −2 weather.
+- **High:** Day −1 weather.
 
-The default period is January 2021–January 2025. The supplied dataset contains 75 event rows across 42 dates, not a full daily series. Coordinate inputs exclude latitude/longitude; early unavailable weather steps are masked. Whole storms are held out and reconstructed training locations are generated out of fold. The classifier keeps the same split and displays the original `Moderate` class as `Medium`.
+Random Forest, CART, Gradient Boosting and SVM are compared using a holdout of whole storms. Every event and weather row belonging to the same storm stays on one side of the split. Tables, confusion matrices and plots are displayed in the notebook.
 
-Models and result CSVs go under `training/trained_models/nearest_prefecture/<EXPERIMENT_ID>/` and `training/trained_models/risk/<EXPERIMENT_ID>/`. Configuration, plots and metric logs go under the corresponding folders in `training/experiment_logs/`.
+## Prediction
 
-These event labels describe days before confirmed landfall and do not establish ordinary daily occurrence risk. There is no future-weather pipeline in these notebooks.
+Set `PREDICTION_FILE` to a CSV of weather conditions, including the same raw weather columns and units as the training data. This can be an observed-weather CSV or your already-predicted weather CSV. Leave it `None` to inspect a heldout example.
+
+The prediction section outputs `matched_weather_profile` and the three class probabilities. A following cell shows the closest historical **training** weather examples for the first query row. Town/prefecture/date columns, when present, are retained as display metadata only; prediction does not require them.
+
+These outputs indicate resemblance to weather around confirmed landfalls. This event-only dataset has no ordinary non-typhoon examples, so the class probabilities do not establish the probability of a typhoon occurring. There is no weather forecasting runtime in this notebook.
+
+## Saved outputs
+
+Use a new `EXPERIMENT_ID` for each run. With the default `weather_only_v1`:
+
+- Models and prediction/training/test CSVs: `training/trained_models/risk/weather_only_v1/`.
+- Settings, metrics and plots: `training/experiment_logs/risk/weather_only_v1/`.
+
+Outputs are protected unless `OVERWRITE_OUTPUTS=True`. Paths work when the notebook kernel starts in `training`, `Typhoon`, or the repository root. `requirements.txt` contains only dependencies needed by this weather-only classifier notebook.

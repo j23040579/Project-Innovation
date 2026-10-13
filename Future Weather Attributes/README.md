@@ -29,6 +29,8 @@ All selected towns are forecast together for each date, in chunks of `FORECAST_B
 
 Forecasting uses only history before the start date. Every selected town must have a consecutive seed window ending the day before that start. Missing towns/dates raise an explicit error instead of silently disappearing. Wind direction is decoded to degrees, bounded weather predictions are fed back recursively, min/mean/max families stay ordered, and the first forecast pressure difference uses the last historical pressure.
 
+The future CSV formats floating-point values to **two decimal places**. Recursive prediction and metric calculations retain full precision; dates and integer calendar fields retain their formats.
+
 The output keeps fixed weather-station latitude/longitude and supplies the 29 raw weather attributes required by the weather-only Typhoon notebook. In that notebook, set `PREDICTION_FILE` to this future weather CSV.
 
 ## Reuse the existing model

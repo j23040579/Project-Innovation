@@ -1,4 +1,6 @@
 __pycache__/
 *.py[cod]
 .venv/
-trained_daily_pipeline/
+.ipynb_checkpoints/
+trained_models/
+Typhoon/

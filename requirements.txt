@@ -8,3 +8,5 @@ shapely>=2.0
 pyproj>=3.6
 tensorflow-cpu==2.21.0
 keras==3.14.1
+matplotlib>=3.8
+ipykernel>=6

@@ -2,5 +2,10 @@ __pycache__/
 *.py[cod]
 .venv/
 .ipynb_checkpoints/
-trained_models/
-Typhoon/
+Typhoon/data/**/*
+!Typhoon/data/**/
+!Typhoon/data/**/.gitkeep
+Typhoon/training/trained_models/*
+!Typhoon/training/trained_models/.gitkeep
+Typhoon/training/experiment_logs/*
+!Typhoon/training/experiment_logs/.gitkeep

@@ -9,3 +9,12 @@ Typhoon/training/trained_models/*
 !Typhoon/training/trained_models/.gitkeep
 Typhoon/training/experiment_logs/*
 !Typhoon/training/experiment_logs/.gitkeep
+/Future Weather Attributes/Data/**/*
+!/Future Weather Attributes/Data/**/
+!/Future Weather Attributes/Data/**/.gitkeep
+/Future Weather Attributes/Forecast/*
+!/Future Weather Attributes/Forecast/.gitkeep
+/Future Weather Attributes/experiment_logs/*
+!/Future Weather Attributes/experiment_logs/.gitkeep
+/Future Weather Attributes/trained_models/*
+!/Future Weather Attributes/trained_models/.gitkeep

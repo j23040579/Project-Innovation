@@ -1,5 +1,6 @@
-# Project Innovation — Typhoon weather profiles
+# Project Innovation — Weather and Typhoon notebooks
 
-Open [`Typhoon/training/train_typhoon_models.ipynb`](Typhoon/training/train_typhoon_models.ipynb) and run its cells from top to bottom. It retains every row from the supplied event-weather CSV, including landfall-day rows, and fits the final models on the full dataset. No coordinate reconstruction or nearest-prefecture model is required.
+- [`Future Weather Attributes/Future_Weather_Attributes_LSTM.ipynb`](Future%20Weather%20Attributes/Future_Weather_Attributes_LSTM.ipynb): predict one year of daily weather, save the future CSV in `Forecast`, and inspect historical error metrics and plots in `experiment_logs`. See its [folder and usage guide](Future%20Weather%20Attributes/README.md).
+- [`Typhoon/training/train_typhoon_models.ipynb`](Typhoon/training/train_typhoon_models.ipynb): train weather-only event profiles using every supplied historical event row, then classify weather conditions as Low/Medium/High. See the [Typhoon guide](Typhoon/README.md).
 
-See [Typhoon/README.md](Typhoon/README.md) for paths and outputs. Install `requirements.txt` in a Python 3.12 notebook environment.
+Keep your existing datasets/model files in their project folders. Install `requirements.txt` in a Python 3.12 notebook environment. In the Typhoon notebook, set `PREDICTION_FILE` to the future-weather CSV to classify its weather profiles.

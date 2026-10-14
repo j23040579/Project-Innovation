@@ -61,3 +61,7 @@ January 2026 one-step and recursive backtests measure different forecast behavio
 The previous notebook saved output for seven days even though its settings text said 365; the settings and forecast were not rerun together. The revision derives an explicit end date and verifies all dates, eliminating that ambiguous fixed-day runtime setting.
 
 No real annual CSV was generated during this revision because the historical weather file and saved weather model were not uploaded. Validation used 14 contract checks, including all 251 towns across 365 dates (91,615 rows), and an end-to-end synthetic notebook run that trained/saved/reloaded the original LSTM shape, produced historical metrics, migrated old folders, and generated a 365-day forecast. Synthetic scores are not included in the user notebook. Its outputs are cleared so actual metrics are generated from your own files when you run it.
+
+## Startup troubleshooting
+
+Use **Restart Kernel and Run All**, starting with Settings, then Imports, then feature loading. `MODEL_DIR` is created in Settings; saved execution counts do not define variables in a fresh kernel. Out-of-order execution now produces explicit instructions. Both `Data/LSTM_processed/japan_daily_lstm_processed.csv` and the double-extension `japan_daily_lstm_processed.csv.csv` are accepted; the canonical name is preferred when both exist.

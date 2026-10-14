@@ -65,3 +65,21 @@ No real annual CSV was generated during this revision because the historical wea
 ## Startup troubleshooting
 
 Use **Restart Kernel and Run All**, starting with Settings, then Imports, then feature loading. `MODEL_DIR` is created in Settings; saved execution counts do not define variables in a fresh kernel. Out-of-order execution now produces explicit instructions. Both `Data/LSTM_processed/japan_daily_lstm_processed.csv` and the double-extension `japan_daily_lstm_processed.csv.csv` are accepted; the canonical name is preferred when both exist.
+
+## Missing and nonfinite historical inputs
+
+The loader now reports missing values, infinities and invalid numeric cells by column and town before handling them. Diagnostic files go to `experiment_logs/<EXPERIMENT_ID>/`:
+
+- `data_quality_counts.csv`: affected columns and cell counts.
+- `data_quality_by_town.csv`: counts for each town.
+- `data_quality_examples.csv`: up to 20 affected rows.
+- `input_repair_counts.csv`: cells forward-filled or given training-derived input fallbacks.
+- `target_window_quality.csv`: incomplete target windows excluded from training/validation.
+
+The original source CSV is not edited and no calendar rows are removed. Weather input gaps up to `MAX_FORWARD_FILL_DAYS=3` use earlier observations from the same town, measured by calendar age. Longer/leading gaps use training-period medians for a new model, its saved input fallback parameters on reuse, or the original training scaler's means for older saved models. Wind direction is repaired as a circular quantity, with raw angle and sine/cosine kept consistent. Saved scalers are not refitted. New models record their input repair settings so reuse reproduces them.
+
+Station latitude, longitude and elevation are restored only from known consistent same-town metadata available by the relevant historical cutoff. Minor floating-point jitter is canonicalized. Existing `openmeteo_elevation` can restore otherwise unknown elevation. Entirely unknown/conflicting station metadata or a weather feature with no finite training fallback raises a specific error naming the field/towns; no guessed coordinates or arbitrary zero values are supplied.
+
+Original weather observations are kept separately from repaired model inputs. Incomplete multifeature **training and validation targets** are excluded, with counts reported. Test dates remain available for feature-wise metrics, which score only finite actual observations. Missing actuals have separate counts; skill against persistence uses paired observed samples. Plots average actual and predicted weather over the same observed towns. A feature with no observed test values has `count=0` and undefined metrics. Nonfinite model outputs still stop evaluation explicitly.
+
+If the notebook still stops, send `data_quality_counts.csv` and the specific new error. These small reports identify what needs fixing without transferring the full historical CSV.

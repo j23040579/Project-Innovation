@@ -1,0 +1,8 @@
+# Versions used for the verified notebook update. Python 3.12.14
+numpy==2.3.5
+pandas==2.2.3
+matplotlib==3.10.8
+scikit-learn==1.8.0
+tensorflow==2.21.0
+joblib==1.5.3
+ipython==9.16.1
